@@ -102,27 +102,27 @@ typedef NS_ENUM(NSInteger, ShareEntityType) {
     ShareEntityFieldClip = 8
 };
 
-static inline NSString* extractIdWithFormat(GPBUnknownFieldSet *fields, NSInteger fieldNumber, NSString *format) {
-    if (![fields hasField:fieldNumber])
+static inline NSString* extractIdWithFormat(GPBUnknownFields *fields, NSInteger fieldNumber, NSString *format) {
+    NSArray<GPBUnknownField*> *fieldArray = [fields fields:fieldNumber];
+    if (!fieldArray)
         return nil;
-    GPBUnknownField *idField = [fields getField:fieldNumber];
-    if ([idField.lengthDelimitedList count] != 1)
+    if ([fieldArray count] != 1)
         return nil;
-    NSString *id = [[NSString alloc] initWithData:[idField.lengthDelimitedList firstObject] encoding:NSUTF8StringEncoding];
+    NSString *id = [[NSString alloc] initWithData:[fieldArray firstObject].lengthDelimited encoding:NSUTF8StringEncoding];
     return [NSString stringWithFormat:format, id];
 }
 
 static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *sourceView) {
     GPBMessage *shareEntity = [%c(GPBMessage) deserializeFromString:serializedShareEntity];
-    GPBUnknownFieldSet *fields = shareEntity.unknownFields;
+    GPBUnknownFields *fields = [[%c(GPBUnknownFields) alloc] initFromMessage:shareEntity];
     NSString *shareUrl;
 
-    if ([fields hasField:ShareEntityFieldClip]) {
-        GPBUnknownField *shareEntityClip = [fields getField:ShareEntityFieldClip];
-        if ([shareEntityClip.lengthDelimitedList count] != 1)
+    NSArray<GPBUnknownField*> *shareEntityClip = [fields fields:ShareEntityFieldClip];
+    if (shareEntityClip) {
+        if ([shareEntityClip count] != 1)
             return NO;
-        GPBMessage *clipMessage = [%c(GPBMessage) parseFromData:[shareEntityClip.lengthDelimitedList firstObject] error:nil];
-        shareUrl = extractIdWithFormat(clipMessage.unknownFields, 1, @"https://youtube.com/clip/%@");
+        GPBMessage *clipMessage = [%c(GPBMessage) parseFromData:[shareEntityClip firstObject].lengthDelimited error:nil];
+        shareUrl = extractIdWithFormat([[%c(GPBUnknownFields) alloc] initFromMessage:clipMessage], 1, @"https://youtube.com/clip/%@");
     }
 
     if (!shareUrl)
@@ -163,6 +163,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
 
 /* -------------------- iPad Layout -------------------- */
 
+// %group gYouTubeNativeShare // YouTube Native Share Option - 0.2.3 - Supports YouTube v17.33.2-v19.34.2
 %hook YTAccountScopedCommandResponderEvent
 - (void)send {
     GPBExtensionDescriptor *shareEntityEndpointDescriptor = [%c(YTIShareEntityEndpoint) shareEntityEndpoint];
@@ -197,6 +198,7 @@ static BOOL showNativeShareSheet(NSString *serializedShareEntity, UIView *source
         return %orig;
 }
 %end
+// %end
 
 //
 
@@ -335,11 +337,69 @@ static void refreshUYouAppearance() {
 - (void)beginEnlargeAnimation {}
 %end
 
+%hook GOODialogView
+- (id)imageView {
+    UIImageView *imageView = %orig;
+
+    if ([[self titleLabel].text containsString:@"uYou\n"]) {
+        // // Invert uYou logo in download dialog if dark mode is enabled
+        // if ([[NSUserDefaults standardUserDefaults] integerForKey:@"page_style"] == 0)
+        //     return imageView;
+        // // https://gist.github.com/coryalder/3113a43734f5e0e4b497
+        // UIImage *image = [imageView image];
+        // CIImage *ciImage = [[CIImage alloc] initWithImage:image];
+        // CIFilter *filter = [CIFilter filterWithName:@"CIColorInvert"];
+        // [filter setDefaults];
+        // [filter setValue:ciImage forKey:kCIInputImageKey];
+        // CIContext *context = [CIContext contextWithOptions:nil];
+        // CIImage *output = [filter outputImage];
+        // CGImageRef cgImage = [context createCGImage:output fromRect:[output extent]];
+        // UIImage *icon = [UIImage imageWithCGImage:cgImage];
+        // CGImageRelease(cgImage);
+
+        // Load icon_clipped.png from uYouBundle.bundle
+        NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"uYouBundle" ofType:@"bundle"];
+        NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
+        NSString *iconPath = [bundle pathForResource:@"icon_clipped" ofType:@"png"];
+        UIImage *icon = [UIImage imageWithContentsOfFile:iconPath];
+        [imageView setImage:icon];
+
+        // Resize image to 30x30
+        // https://stackoverflow.com/a/2658801/19227228
+        CGSize size = CGSizeMake(30, 30);
+        UIGraphicsBeginImageContextWithOptions(size, NO, 0.0);
+        [icon drawInRect:CGRectMake(0, 0, size.width, size.height)];
+        UIImage *resizedImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+
+        [imageView setImage:resizedImage];
+    }
+
+    return imageView;
+}
+// Increase space between uYou label and video title
+- (id)titleLabel {
+    UILabel *titleLabel = %orig;
+    if ([titleLabel.text containsString:@"uYou\n"] &&
+        ![titleLabel.text containsString:@"uYou\n\n"]
+    ) {
+        NSString *text = [titleLabel.text stringByReplacingOccurrencesOfString:@"uYou\n" withString:@"uYou\n\n"];
+        [titleLabel setText:text];
+    }
+    return titleLabel;
+}
+%end
+
 %ctor {
     %init;
     if (IS_ENABLED(@"googleSignInPatch_enabled")) {
         %init(gGoogleSignInPatch);
     }
+/*
+    if (IS_ENABLED(@"youtubeNativeShare_enabled")) {
+        %init(gYouTubeNativeShare);
+    }
+*/
     // if (@available(iOS 16, *)) {
     //     %init(iOS16);
     // }
