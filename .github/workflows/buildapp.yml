@@ -8,7 +8,7 @@ on:
     inputs:
       sdk_version:
         description: "iOS SDK Version"
-        default: "16.5"
+        default: "17.5"
         required: true
         type: string
       uyou_version:
@@ -93,7 +93,7 @@ jobs:
       - name: Download iOS SDK
         if: steps.SDK.outputs.cache-hit != 'true'
         run: |
-          git clone --quiet -n --depth=1 --filter=tree:0 https://github.com/theos/sdks/
+          git clone --quiet -n --depth=1 --filter=tree:0 https://github.com/aricloverALT/sdks/
           cd sdks
           git sparse-checkout set --no-cone iPhoneOS${{ inputs.sdk_version }}.sdk
           git checkout
@@ -169,7 +169,7 @@ jobs:
       - name: Create Release
         if: ${{ inputs.create_release }}
         id: create_release
-        uses: softprops/action-gh-release@v2.0.9
+        uses: softprops/action-gh-release@v2.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           UYOU_VERSION: ${{ inputs.uyou_version }}
