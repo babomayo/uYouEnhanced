@@ -48,6 +48,8 @@ jobs:
           git add .
           git submodule update --init --recursive --remote Tweaks/YouTimeStamp
           git add .
+          git submodule update --init --recursive --remote Tweaks/YouTubeHeaderALT
+          git add .
           git submodule update --init --recursive --remote Tweaks/YouTubeHeader
           git add .
           git submodule update --init --recursive --remote Tweaks/YTABConfig
