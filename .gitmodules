@@ -58,8 +58,8 @@
 [submodule "Tweaks/YouTube-X"]
     path = Tweaks/YouTube-X
     url = https://github.com/PoomSmart/YouTube-X/
-[submodule "Tweaks/YouTubeHeader1"]
-    path = Tweaks/YouTubeHeader1
+[submodule "Tweaks/YouTubeHeaderALT"]
+    path = Tweaks/YouTubeHeaderALT
     url = https://github.com/PoomSmart/YouTubeHeader.git
     branch = main
 [submodule "Tweaks/YouTubeHeader"]
