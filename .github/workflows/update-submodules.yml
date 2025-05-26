@@ -18,6 +18,7 @@ jobs:
 
       - name: Update submodules
         run: |
+          git submodule add --name YouTubeHeaderALT https://github.com/PoomSmart/YouTubeHeader.git Tweaks/YouTubeHeaderALT 
           git submodule update --init --recursive --remote Tweaks/Alderis
           git add .
           git submodule update --init --recursive --remote Tweaks/DontEatMyContent
