@@ -65,6 +65,8 @@ jobs:
           git submodule update --init --recursive
           git commit -m "updated submodules"
           git push
+      - name: Add submodule
+        run: |
           git add .gitmodules Tweaks/YouTubeHeaderALT
           git commit -m "Add YouTubeHeaderALT submodule"
           git push
