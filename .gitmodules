@@ -96,3 +96,6 @@
 [submodule "Tweaks/YouSlider"]
     path = Tweaks/YouSlider
     url = https://github.com/PoomSmart/YouSlider
+[submodule "YouTubeHeaderALT"]
+	path = Tweaks/YouTubeHeaderALT
+	url = https://github.com/PoomSmart/YouTubeHeader.git
