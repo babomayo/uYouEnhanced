@@ -91,8 +91,8 @@
     path = Tweaks/protobuf
     url = https://github.com/protocolbuffers/protobuf.git
 [submodule "Tweaks/PSHeader"]
-	path = Tweaks/PSHeader
-	url = https://github.com/PoomSmart/PSHeader.git
+    path = Tweaks/PSHeader
+    url = https://github.com/PoomSmart/PSHeader.git
 [submodule "Tweaks/YouSlider"]
-	path = Tweaks/YouSlider
-	url = https://github.com/PoomSmart/YouSlider
+    path = Tweaks/YouSlider
+    url = https://github.com/PoomSmart/YouSlider
