@@ -24,7 +24,7 @@
 #import <YouTubeHeader/YTIBrowseRequest.h>
 #import <YouTubeHeader/YTIButtonRenderer.h>
 #import <YouTubeHeader/YTICompactLinkRenderer.h>
-#import <YouTubeHeader/YTICompactListItemRenderer.h>
+#import <YouTubeHeaderALT/YTICompactListItemRenderer.h>
 #import <YouTubeHeader/YTICompactListItemThumbnailSupportedRenderers.h>
 #import <YouTubeHeader/YTIIconThumbnailRenderer.h>
 #import <YouTubeHeader/YTIElementRenderer.h>
