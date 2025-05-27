@@ -18,6 +18,7 @@ jobs:
 
       - name: Update submodules
         run: |
+          git rm -rf --ignore-unmatch Tweaks/YouTubeHeaderALT
           git submodule update --init --recursive --remote Tweaks/Alderis
           git add .
           git submodule update --init --recursive --remote Tweaks/DontEatMyContent
