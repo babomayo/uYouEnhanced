@@ -163,7 +163,7 @@ jobs:
         env:
           YOUTUBE_URL: ${{ env.URL_YT }}
 
-      - - name: Fix compiling & Build Package
+      - name: Fix compiling & Build Package
         id: build_package
         run: |
           cd main
